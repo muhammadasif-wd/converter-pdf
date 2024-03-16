@@ -1,113 +1,170 @@
-import Image from "next/image";
+"use client";
+import React, { useRef, useState } from "react";
+import SVGDesign from "./design-svg";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
-export default function Home() {
+const Home = () => {
+  const pdfRef = useRef();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDownloadPDF = () => {
+    setIsLoading(true);
+    const input = pdfRef.current;
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4", true);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const pdfRatio = pdfWidth / pdfHeight;
+      const imgRatio = imgWidth / imgHeight;
+      let finalImgWidth, finalImgHeight;
+      if (pdfRatio > imgRatio) {
+        finalImgWidth = pdfHeight * imgRatio;
+        finalImgHeight = pdfHeight;
+      } else {
+        finalImgWidth = pdfWidth;
+        finalImgHeight = pdfWidth / imgRatio;
+      }
+      const imgX = (pdfWidth - finalImgWidth) / 2;
+      const imgY = (pdfHeight - finalImgHeight) / 2;
+      pdf.addImage(imgData, "PNG", imgX, imgY, finalImgWidth, finalImgHeight);
+      pdf.save("example-pdf.pdf");
+      setIsLoading(false);
+    });
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div className="">
+      <div ref={pdfRef} className="w-full mx-auto">
+        <section>
+          <div className="relative">
+            <SVGDesign />
+          </div>
+          <div className="absolute w-full top-3">
+            <div className="w-full">
+              <h1 className="text-center font-medium text-white tracking-widest 320:text-[10px] 375:text-sm 425:text-[16px] md:text-lg lg:text-2xl xl:text-4xl 375:mt-1 520:mt-2 620:mt-3 md:mt-5 lg:mt-8 xl:mt-10">
+                ||SHREEGANESH||
+              </h1>
+              <h1 className="text-center font-medium text-white tracking-widest 320:text-[10px] 375:text-sm 425:text-[16px] md:text-lg lg:text-2xl xl:text-4xl 375:mt-1 520:mt-2 620:mt-3 md:mt-5 lg:mt-8 xl:mt-10">
+                BIO DATA
+              </h1>
+              <section className="flex flex-col 320:gap-1 425:gap-0.5 475:gap-3 620:gap-5 lg:gap-7 xl:gap-10 text-white 320:ml-3 320:mt-3 475:ml-6 475:mt-6 620:ml-8 620:mt-8 md:ml-8 md:mt-8 lg:ml-10 lg:mt-10 xl:ml-16 xl:mt-16 320:text-[10px] 375:text-xs 425:text-sm md:text-base lg:text-2xl xl:text-4xl">
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Name
+                  </p>
+                  : <p>ARCHANA KUMARI</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Date of Birth
+                  </p>
+                  : <p>08 December 2002</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Height
+                  </p>
+                  : <p>5 ft. 2 inch.</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Caste
+                  </p>
+                  : <p>KUMHAR</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Gotra
+                  </p>
+                  : <p>KASHYAP</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Languages
+                  </p>
+                  : <p>English, Hindi</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Complexion
+                  </p>
+                  : <p>Milky white</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    EDUCATIONAL-QUALIFICATION
+                  </p>
+                  : <p> 10th - 1st Div. (2019) 12th - 1st Div. (2021)</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    PRESENTLY PURSUING
+                  </p>
+                  : <p> B.A. 4th Semester (Geography,2021- 2024)</p>
+                </div>
+                <h1 className="font-medium text-white tracking-widest 320:text-[10px] 375:text-sm 425:text-[16px] md:text-lg lg:text-2xl xl:text-4xl 375:mt-1 520:mt-2 620:mt-3 md:mt-5 lg:mt-8 xl:mt-10">
+                  FAMILY DESCRIPTION
+                </h1>
+
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Father's Name
+                  </p>
+                  : <p>KAMDEO PRAJAPATI (Business) (kirana store)</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Mother's Name
+                  </p>
+                  : <p>DEVANTI DEVI (Homemaker)</p>
+                </div>
+                <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                  <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                    Siblings
+                  </p>
+                  : <p> 2 Younger Sisters:1.Shilpi Kumar 2.Varsha Kumari</p>
+                </div>
+                <h1 className="font-medium text-white tracking-widest 320:text-[10px] 375:text-sm 425:text-[16px] md:text-lg lg:text-2xl xl:text-4xl 375:mt-1 520:mt-2 620:mt-3 md:mt-5 lg:mt-8 xl:mt-10">
+                  ADDRESS
+                </h1>
+                <div className="flex flex-wrap 320:gap-1 425:gap-0.5 475:gap-3 620:gap-5 lg:gap-7 xl:gap-10 text-white 320:text-[10px] 375:text-xs 425:text-sm md:text-base lg:text-2xl xl:text-4xl">
+                  <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                    <p className="320:w-20 375:w-24 425:w-28 md:w-40 lg:w-60 xl:w-80">
+                      At- Dhankheri
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                    <p className="">CONTACT NUMBER</p>:{" "}
+                    <p> 9471371281 & 9661515728</p>
+                  </div>
+
+                  <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                    <p className="">P.o+P.S-Itkhori</p>
+                  </div>
+                  <div className="flex items-start gap-1 425:gap-1 520:gap-2 md:gap-3 lg:gap-5 xl:gap-6">
+                    <p className="">Dist- Chatra 825408 (Jharkhand)</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="flex justify-center">
+        <button
+          className="font-bold my-3"
+          onClick={handleDownloadPDF}
+          disabled={isLoading}
+        >
+          {isLoading ? "Generating PDF..." : "Download PDF"}
+        </button>
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
-}
+};
+
+export default Home;
