@@ -8,6 +8,34 @@ const Home = () => {
   const pdfRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleDownloadPDF = () => {
+    setIsLoading(true);
+    const input = pdfRef.current;
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4", true);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const pdfRatio = pdfWidth / pdfHeight;
+      const imgRatio = imgWidth / imgHeight;
+      let finalImgWidth, finalImgHeight;
+      if (pdfRatio > imgRatio) {
+        finalImgWidth = pdfHeight * imgRatio;
+        finalImgHeight = pdfHeight;
+      } else {
+        finalImgWidth = pdfWidth;
+        finalImgHeight = pdfWidth / imgRatio;
+      }
+      const imgX = (pdfWidth - finalImgWidth) / 2;
+      const imgY = (pdfHeight - finalImgHeight) / 2;
+      pdf.addImage(imgData, "PNG", imgX, imgY, finalImgWidth, finalImgHeight);
+      pdf.save("example-pdf.pdf");
+      setIsLoading(false);
+    });
+  };
+
   return (
     <div className="">
       <div ref={pdfRef} className="w-full mx-auto">
