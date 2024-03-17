@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@media print {
+    .print-content, .print-content * {
+      visibility: visible;
+      color: white !important;
+    }
+    .print-content {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }

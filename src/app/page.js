@@ -1,49 +1,69 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SVGDesign from "./design-svg";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { useReactToPrint } from "react-to-print";
 
 const Home = () => {
-  const pdfRef = useRef();
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const contentToPrint = useRef(null);
+  const [contentHeight, setContentHeight] = useState(0);
 
-  const handleDownloadPDF = () => {
-    setIsLoading(true);
-    const input = pdfRef.current;
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4", true);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const pdfRatio = pdfWidth / pdfHeight;
-      const imgRatio = imgWidth / imgHeight;
-      let finalImgWidth, finalImgHeight;
-      if (pdfRatio > imgRatio) {
-        finalImgWidth = pdfHeight * imgRatio;
-        finalImgHeight = pdfHeight;
-      } else {
-        finalImgWidth = pdfWidth;
-        finalImgHeight = pdfWidth / imgRatio;
-      }
-      const imgX = (pdfWidth - finalImgWidth) / 2;
-      const imgY = (pdfHeight - finalImgHeight) / 2;
-      pdf.addImage(imgData, "PNG", imgX, imgY, finalImgWidth, finalImgHeight);
-      pdf.save("example-pdf.pdf");
-      setIsLoading(false);
-    });
-  };
+  useEffect(() => {
+    setContentHeight(contentToPrint.current.clientHeight);
+  }, []);
+
+  const handlePrint = useReactToPrint({
+    content: () => contentToPrint.current,
+    documentTitle: "Print This Document",
+    onBeforePrint: () => {
+      console.log("before printing...");
+      setLoading(true);
+    },
+    onAfterPrint: () => {
+      console.log("after printing...");
+      setLoading(false);
+    },
+    removeAfterPrint: true,
+  });
+
+  // const handleDownloadPDF = () => {
+  //   setIsLoading(true);
+  //   const input = pdfRef.current;
+  //   html2canvas(input, { scale: 2 }).then((canvas) => {
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const pdf = new jsPDF("p", "mm", "a4", true);
+  //     const pdfWidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = pdf.internal.pageSize.getHeight();
+  //     const imgWidth = canvas.width;
+  //     const imgHeight = canvas.height;
+  //     const pdfRatio = pdfWidth / pdfHeight;
+  //     const imgRatio = imgWidth / imgHeight;
+  //     let finalImgWidth, finalImgHeight;
+  //     if (pdfRatio > imgRatio) {
+  //       finalImgWidth = pdfHeight * imgRatio;
+  //       finalImgHeight = pdfHeight;
+  //     } else {
+  //       finalImgWidth = pdfWidth;
+  //       finalImgHeight = pdfWidth / imgRatio;
+  //     }
+  //     const imgX = (pdfWidth - finalImgWidth) / 2;
+  //     const imgY = (pdfHeight - finalImgHeight) / 2;
+  //     pdf.addImage(imgData, "PNG", imgX, imgY, finalImgWidth, finalImgHeight);
+  //     pdf.save("example-pdf.pdf", { putTotalPages: false, scale: 1 });
+  //     setIsLoading(false);
+  //   });
+  // };
 
   return (
-    <div className="">
-      <div ref={pdfRef} className="w-full mx-auto">
-        <section>
-          <div className="relative">
-            <SVGDesign />
-          </div>
-          <div className="absolute w-full top-3">
+    <div>
+      <div>
+        <div
+          style={{ minHeight: contentHeight }}
+          ref={contentToPrint}
+          className="relative w-full mx-auto !text-white"
+        >
+          <SVGDesign />
+          <div className="absolute w-full top-3 h-screen">
             <div className="w-full">
               <h1 className="text-center font-medium text-white tracking-widest 320:text-[10px] 375:text-sm 425:text-[16px] md:text-lg lg:text-2xl xl:text-4xl 375:mt-1 520:mt-2 620:mt-3 md:mt-5 lg:mt-8 xl:mt-10">
                 ||SHREEGANESH||
@@ -152,15 +172,17 @@ const Home = () => {
               </section>
             </div>
           </div>
-        </section>
+        </div>
       </div>
       <div className="flex justify-center">
         <button
           className="font-bold my-3"
-          onClick={handleDownloadPDF}
-          disabled={isLoading}
+          onClick={() => {
+            handlePrint(null, () => contentToPrint.current);
+          }}
+          disabled={loading}
         >
-          {isLoading ? "Generating PDF..." : "Download PDF"}
+          {loading ? "Generating PDF..." : "Download PDF"}
         </button>
       </div>
     </div>
