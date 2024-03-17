@@ -63,7 +63,7 @@ const Home = () => {
           className="relative w-full mx-auto !text-white"
         >
           <SVGDesign />
-          <div className="absolute w-full top-3 h-screen">
+          <div className="absolute w-full top-3">
             <div className="w-full">
               <h1 className="text-center font-medium text-white tracking-widest 320:text-[10px] 375:text-sm 425:text-[16px] md:text-lg lg:text-2xl xl:text-4xl 375:mt-1 520:mt-2 620:mt-3 md:mt-5 lg:mt-8 xl:mt-10">
                 ||SHREEGANESH||
